@@ -10,5 +10,5 @@ class Course (
     val title: String,
     val description: String,
     val image: String,
-    val link: String,
-)
+    val link: String
+    )
