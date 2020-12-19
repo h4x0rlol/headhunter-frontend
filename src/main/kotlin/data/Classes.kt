@@ -4,11 +4,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 
 @Serializable
-class Course (
+class User (
     val id: Int,
-    val price: String,
-    val title: String,
-    val description: String,
-    val image: String,
-    val link: String
+    val username: String,
+    val password: String
     )

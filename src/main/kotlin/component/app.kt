@@ -1,44 +1,41 @@
 package component
-
-
-
-
-
 import data.*
-import io.ktor.client.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.request.*
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import org.w3c.dom.events.Event
 import react.*
-import react.dom.*
+import react.dom.main
 
+//
+//private val scope = MainScope()
+//val jsonClient = HttpClient {
+//    install(JsonFeature) { serializer = KotlinxSerializer() }
+//
+//}
 
-private val scope = MainScope()
-val jsonClient = HttpClient {
-    install(JsonFeature) { serializer = KotlinxSerializer() }
-
-}
-
-suspend fun getShoppingList(): List<Course> {
-    return jsonClient.get("http://admin-happy-hearts.herokuapp.com/api/courses")
-}
+//suspend fun getShoppingList(): List<Course> {
+//    return jsonClient.get("http://admin-happy-hearts.herokuapp.com/api/courses")
+//}
 
 interface AppProps : RProps {
-    var lessons: Map<Int, Lesson>
-    var students: Map<Int, Student>
+    var user: User?
 }
 
 
 
 fun fApp() =
     functionalComponent<AppProps> { props ->
-        useEffect(dependencies = listOf()) {
-            scope.launch {
-               val xd =  getShoppingList()
-                console.log(xd)
+
+
+        val (signFormOpen, setSignFormOpen) = useState(false);
+        fun toggleSignForm (): (Event) -> Unit = { _: Event->
+            setSignFormOpen(!signFormOpen)
+        }
+
+
+        main {
+            navbar (toggleSignForm())
+            welcomepage()
+            if(signFormOpen) {
+                signform(toggleSignForm())
             }
         }
-      button {}
     }
