@@ -48,9 +48,11 @@ val fNavBar =
     }
 
 fun RBuilder.navbar(
-    toggleSignForm: (Event) -> Unit
+    toggleSignForm: (Event) -> Unit,
+    user: User?
 ) = child(
     withDisplayName("Lesson", fNavBar)
 ) {
     attrs.toggleSignForm = toggleSignForm
+    attrs.user = user
 }

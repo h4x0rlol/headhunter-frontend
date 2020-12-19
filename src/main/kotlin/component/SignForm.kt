@@ -2,15 +2,32 @@ package component
 
 import data.User
 import hoc.withDisplayName
+import io.ktor.client.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.http.HttpHeaders.Accept
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.html.InputType
 import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onSubmitFunction
 import kotlinx.html.style
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
+
+private val scope = MainScope()
+val jsonClient = HttpClient {
+    install(JsonFeature) { serializer = KotlinxSerializer() }
+}
+
+
+
 
 
 interface SignFormProps : RProps {
@@ -23,6 +40,38 @@ val fSignForm =
         val (username, setUsername) = useState("")
         val (password, setPassword) = useState("")
 
+
+        suspend fun submitSignIn(): HttpStatusCode{
+            val newUser = jsonClient.post<HttpStatusCode> {
+                url("http://localhost:3000/user")
+                contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
+                body = User(id = 0,
+                        username = username,
+                        password = password,
+                        status = 0
+                )
+            }
+            console.log(newUser)
+            jsonClient.close()
+            return newUser
+        }
+
+        suspend fun submitSignUp(): HttpStatusCode{
+            val newUser = jsonClient.post<HttpStatusCode> {
+                url("http://localhost:3000/user")
+                contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
+                body = User(id = 0,
+                        username = username,
+                        password = password,
+                        status = 0
+                )
+            }
+            console.log(newUser)
+            jsonClient.close()
+            return newUser
+        }
 
         div("modalSign") {
             div("modalDialogWrap") {
@@ -55,6 +104,12 @@ val fSignForm =
                             if (type == "signIn") {
                                 div("signForm_body") {
                                     form(classes = "signForm_body_form") {
+                                        attrs.onSubmitFunction = {
+                                            it.preventDefault()
+                                            scope.launch {
+                                                submitSignIn()
+                                            }
+                                        }
                                         div("signForm_body_form__input-group") {
                                             input(classes = "signForm_body_form__input-group_input") {
                                                 attrs.value = username
@@ -86,6 +141,12 @@ val fSignForm =
                             if (type == "signUp") {
                                 div("signForm_body") {
                                     form (classes = "signForm_body_form") {
+                                        attrs.onSubmitFunction = {
+                                            it.preventDefault()
+                                            scope.launch {
+                                                submitSignUp()
+                                            }
+                                        }
                                         div("signForm_body_form__input-group") {
                                             input(classes = "signForm_body_form__input-group_input") {
                                                 attrs.value = username

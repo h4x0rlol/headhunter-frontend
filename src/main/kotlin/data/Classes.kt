@@ -7,5 +7,6 @@ import kotlinx.serialization.Serializer
 class User (
     val id: Int,
     val username: String,
-    val password: String
+    val password: String,
+    val status: Int
     )

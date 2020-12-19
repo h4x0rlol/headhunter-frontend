@@ -2,6 +2,7 @@ package component
 import data.*
 import org.w3c.dom.events.Event
 import react.*
+import react.dom.div
 import react.dom.main
 
 //
@@ -32,10 +33,16 @@ fun fApp() =
 
 
         main {
-            navbar (toggleSignForm())
-            welcomepage()
-            if(signFormOpen) {
-                signform(toggleSignForm())
+            navbar (toggleSignForm(), props.user)
+            if(props.user==null) {
+                welcomepage()
+                if(signFormOpen) {
+                    signform(toggleSignForm())
+                }
+            }
+            else {
+                div { +"User" }
+                div {+"Data"}
             }
         }
     }
