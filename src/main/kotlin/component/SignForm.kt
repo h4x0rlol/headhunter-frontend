@@ -1,25 +1,36 @@
 package component
 
+import data.State
 import data.User
+import data.UserLog
 import hoc.withDisplayName
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.http.HttpHeaders.Accept
+import io.ktor.http.cio.*
+import io.ktor.utils.io.*
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.html.InputType
-import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.onSubmitFunction
-import kotlinx.html.style
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
+import redux.RAction
+import redux.Store
+import redux.UserChange
+import redux.WrapperAction
 
 private val scope = MainScope()
 val jsonClient = HttpClient {
@@ -32,6 +43,7 @@ val jsonClient = HttpClient {
 
 interface SignFormProps : RProps {
     var toggleSignForm: (Event) -> Unit
+    var store: Store<State, RAction, WrapperAction>
 }
 
 val fSignForm =
@@ -39,36 +51,44 @@ val fSignForm =
         val (type, setType) = useState("signIn")
         val (username, setUsername) = useState("")
         val (password, setPassword) = useState("")
+        val (status, setStatus) = useState(0)
 
 
-        suspend fun submitSignIn(): HttpStatusCode{
-            val newUser = jsonClient.post<HttpStatusCode> {
-                url("http://localhost:3000/user")
+        suspend fun submitSignIn(): User{
+            val newUser = jsonClient.post<User> {
+                url("http://localhost:3000/user/login")
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
-                body = User(id = 0,
-                        username = username,
-                        password = password,
-                        status = 0
+                body = User(
+                        0,
+                        username,
+                        password,
+                        0
                 )
+
             }
-            console.log(newUser)
+//            console.log(newUser)
+            props.store.dispatch(UserChange(newUser))
+            props.toggleSignForm
             jsonClient.close()
+
             return newUser
         }
 
-        suspend fun submitSignUp(): HttpStatusCode{
-            val newUser = jsonClient.post<HttpStatusCode> {
+        suspend fun submitSignUp(): User{
+            val newUser = jsonClient.post<User> {
                 url("http://localhost:3000/user")
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 body = User(id = 0,
                         username = username,
                         password = password,
-                        status = 0
+                        status = status
                 )
             }
-            console.log(newUser)
+//            console.log(newUser)
+            props.store.dispatch(UserChange(newUser))
+            props.toggleSignForm
             jsonClient.close()
             return newUser
         }
@@ -167,6 +187,19 @@ val fSignForm =
                                                 attrs.placeholder = "Пароль"
                                                 attrs.type = InputType.password
                                             }
+                                            select(classes = "signForm_body_form__input-group_input") {
+                                                option { +"Я ищу работу" }
+                                                option { +"Я ищу работников" }
+                                                attrs.onChangeFunction = {
+                                                    val text = it.target as HTMLSelectElement
+                                                    if (text.value == "Я ищу работу") {
+                                                        setStatus(0)
+                                                    }
+                                                    else {
+                                                        setStatus(1)
+                                                    }
+                                                }
+                                            }
                                         }
                                         button(classes = "signForm_body_form_btn") {
                                             +"Регистрация"
@@ -183,9 +216,11 @@ val fSignForm =
     }
 
 fun RBuilder.signform(
-    toggleSignForm: (Event) -> Unit
+    toggleSignForm: (Event) -> Unit,
+    store: Store<State, RAction, WrapperAction>
 ) = child(
     withDisplayName("Lesson", fSignForm)
 ) {
     attrs.toggleSignForm = toggleSignForm
+    attrs.store = store
 }

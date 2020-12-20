@@ -1,8 +1,7 @@
 package component
 
-import data.User
+import data.State
 import hoc.withDisplayName
-import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import react.RBuilder
@@ -12,12 +11,14 @@ import react.dom.a
 import react.dom.div
 import react.dom.h1
 import react.functionalComponent
-import react.router.dom.redirect
-import react.router.dom.useHistory
+import redux.RAction
+import redux.Store
+import redux.UserChange
+import redux.WrapperAction
 
 interface NavBarProps : RProps {
     var toggleSignForm: (Event) -> Unit
-    var user: User?
+    var store: Store<State, RAction, WrapperAction>
 }
 
 val fNavBar =
@@ -28,13 +29,16 @@ val fNavBar =
                        + "HeadHunter"
                     }
                     div("navbar_container_buttons") {
-                        if (props.user!=null) {
+                        if (props.store.getState().user!=null) {
                             div {
                                 a {
-                                    +"Ник"
+                                    +props.store.getState().user!!.username
                                 }
                                 a {
                                     +"Выйти"
+                                    attrs.onClickFunction = {
+                                        props.store.dispatch(UserChange(null))
+                                    }
                                 }
                             }
                         }
@@ -49,10 +53,10 @@ val fNavBar =
 
 fun RBuilder.navbar(
     toggleSignForm: (Event) -> Unit,
-    user: User?
+    store: Store<State, RAction, WrapperAction>
 ) = child(
     withDisplayName("Lesson", fNavBar)
 ) {
     attrs.toggleSignForm = toggleSignForm
-    attrs.user = user
+    attrs.store = store
 }

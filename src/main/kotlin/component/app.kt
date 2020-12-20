@@ -1,9 +1,13 @@
 package component
 import data.*
+import hoc.withDisplayName
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
 import react.dom.main
+import redux.RAction
+import redux.Store
+import redux.WrapperAction
 
 //
 //private val scope = MainScope()
@@ -17,7 +21,7 @@ import react.dom.main
 //}
 
 interface AppProps : RProps {
-    var user: User?
+    var store: Store<State, RAction, WrapperAction>
 }
 
 
@@ -33,16 +37,25 @@ fun fApp() =
 
 
         main {
-            navbar (toggleSignForm(), props.user)
-            if(props.user==null) {
+            navbar (toggleSignForm(), props.store)
+            if(props.store.getState().user==null) {
                 welcomepage()
                 if(signFormOpen) {
-                    signform(toggleSignForm())
+                    signform(toggleSignForm(), props.store)
                 }
             }
             else {
-                div { +"User" }
-                div {+"Data"}
+                mainpage(props.store)
             }
         }
     }
+
+
+fun RBuilder.app(
+        store: Store<State, RAction, WrapperAction>
+) =
+        child(
+                withDisplayName("App", fApp())
+        ) {
+            attrs.store = store
+        }
