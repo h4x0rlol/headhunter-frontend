@@ -5,12 +5,6 @@ import kotlinx.serialization.Serializer
 
 
 @Serializable
-class UserLog (
-        val username: String,
-        val password: String,
-)
-
-@Serializable
 class User (
     val id: Int,
     val username: String,

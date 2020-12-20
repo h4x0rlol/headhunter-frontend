@@ -2,7 +2,6 @@ package component
 
 import data.State
 import data.User
-import data.UserLog
 import hoc.withDisplayName
 import io.ktor.client.*
 import io.ktor.client.features.json.*

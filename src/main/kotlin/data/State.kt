@@ -1,8 +1,7 @@
 package data
 
 class State(
-    val user: User?
+    val user: User?,
+    val cabinet: Boolean
 )
 
-fun initialState() =
-    State(null)

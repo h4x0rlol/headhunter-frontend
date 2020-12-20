@@ -78,16 +78,20 @@ val fMainPage =
             }
 
 
-            div("cards") {
-                resumeList.mapIndexed { index, resume ->
-                     div("container center") {
+            if(props.store.getState().cabinet) {
+                cabinet(props.store)
+            }
+            else {
+                div("cards") {
+                    resumeList.mapIndexed { index, resume ->
+                        div("container center") {
                             div("card") {
                                 h2("cardh2") {
                                     +resume.title
                                 }
                                 hr("card-hr") { }
                                 p("card-p") { +resume.description }
-                                if (props.store.getState().user!!.status == 1) {
+                                if (props.store.getState().user!!.status == 1 && props.store.getState().user!!.id !=resume.userId) {
                                     if(replyList[index]) {
                                         button(classes = "cardbtn") {
                                             attrs.onClickFunction = {_:Event->
@@ -103,7 +107,7 @@ val fMainPage =
                                         button(classes = "cardbtn") {
                                             attrs.onClickFunction = {_:Event->
                                                 scope.launch {
-                                                        postReply(props.store.getState().user!!.id,resume.id)
+                                                    postReply(props.store.getState().user!!.id,resume.id)
                                                 }
                                                 replyList[index] = true
                                                 setReplyList(replyList)
@@ -114,7 +118,9 @@ val fMainPage =
                             }
                         }
                     }
+                }
             }
+
         }
 
 

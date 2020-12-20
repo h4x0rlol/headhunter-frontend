@@ -8,7 +8,7 @@ import kotlinx.browser.document
 
 val store = createStore(
         ::rootReducer,
-        State(user = null),
+        State(user = null, cabinet = false),
         compose(
                 rEnhancer(),
                 applyMiddleware()

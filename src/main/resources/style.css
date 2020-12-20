@@ -341,6 +341,22 @@ hr {
     flex-direction: column;
 }
 
+.desccard {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.descbtn {
+    background-color: black;
+    color: white;
+    width: 30%;
+    text-align: center;
+    margin-top: 15px;
+}
+
 .cardbtn {
     background-color: black;
     color: white;
@@ -351,6 +367,80 @@ hr {
 
 .cardh3 {
     font-size: 20px;
+}
+
+.change {
+    display: flex;
+    justify-content: center;
+// align-items: center;
+    flex-direction: column;
+    font-family: "Roboto", sans-serif;
+    width: 60%;
+    margin: 0 auto;
+}
+
+.change_name {
+    font-size: 23px;
+}
+
+.change_inputGroup {
+    display: flex;
+// flex-direction: row;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+    width: max-content;
+}
+
+.change_container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.change_label {
+    font-size: 16px;
+    line-height: 18px;
+    color: #5e5e5e;
+    padding-top: 11px;
+    padding-bottom: 11px;
+    padding-right: 20px;
+}
+
+.change_input {
+    border-width: 1px;
+    border-style: solid;
+    padding: 0.5em;
+    width: auto;
+    font-size: 16px;
+    margin: 0;
+    padding-top: 10px;
+    padding-bottom: 11px;
+}
+
+.change_button {
+    margin: 0;
+    vertical-align: middle;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1;
+    position: relative;
+    text-decoration: none;
+    text-align: center;
+    border: 1px solid transparent;
+    display: inline-block;
+    padding: 0.75em 1.5em;
+    font-size: 16px;
+    background-color: #54ad54;
+    color: #fff;
+    border-radius: 0.25em;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    --focus-outline-color: rgba(51, 204, 51, 0.3);
+    margin-top: 5px;
+    width: max-content;
 }
 
 
