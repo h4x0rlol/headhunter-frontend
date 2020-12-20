@@ -69,7 +69,6 @@ val fSignForm =
 //            console.log(newUser)
             props.store.dispatch(UserChange(newUser))
             props.toggleSignForm
-            jsonClient.close()
 
             return newUser
         }
@@ -88,7 +87,6 @@ val fSignForm =
 //            console.log(newUser)
             props.store.dispatch(UserChange(newUser))
             props.toggleSignForm
-            jsonClient.close()
             return newUser
         }
 

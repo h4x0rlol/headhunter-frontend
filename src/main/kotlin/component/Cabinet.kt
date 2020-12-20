@@ -55,7 +55,7 @@ val fCabinet =
             val (replies,setReplies) = useState(listOf<Reply>())
             val (title, setTitle) = useState("")
             val (desc, setDesc) = useState("")
-            useEffect(dependencies = listOf(resumes)) {
+            useEffect(dependencies = listOf()) {
                 scope.launch {
                     val response = getUserResumeList(props.store.getState().user!!.id)
                     val reps = getRepliesList(props.store.getState().user!!.id)
@@ -77,7 +77,7 @@ val fCabinet =
                     )
                 }
                 console.log(response)
-                resumesClient.close()
+//                resumesClient.close()
                 return response
             }
 
@@ -115,9 +115,13 @@ val fCabinet =
                                 attrs.onClickFunction = {_:Event->
                                     scope.launch {
                                         postResume(props.store.getState().user!!.id)
+                                        val response = getUserResumeList(props.store.getState().user!!.id)
+                                        val reps = getRepliesList(props.store.getState().user!!.id)
+                                        setResumes(response)
+                                        setReplies(reps)
+                                        setNewResume(false)
                                     }
-                                    setResumes(resumes)
-                                    setNewResume(false)
+
                                 }
                                 +"Создать резюме" }
                         }
@@ -132,7 +136,7 @@ val fCabinet =
                         button(classes = "descbtn") { +"Создать новое резюме"
                         attrs.onClickFunction = {
                          setNewResume(true)
-                        }
+                            }
                         }
                     }
                     resumes.map {resume->
@@ -152,8 +156,12 @@ val fCabinet =
                                     attrs.onClickFunction = {_:Event->
                                         scope.launch {
                                             deleteResume(resume.id)
+                                            val response = getUserResumeList(props.store.getState().user!!.id)
+                                            val reps = getRepliesList(props.store.getState().user!!.id)
+                                            setResumes(response)
+                                            setReplies(reps)
                                         }
-                                        setResumes(resumes)
+
                                     }
                                 }
                             }

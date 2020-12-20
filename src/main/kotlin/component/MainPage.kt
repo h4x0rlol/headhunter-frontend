@@ -52,7 +52,6 @@ suspend fun postReply(userId: Int, resumeId: Int ): HttpStatusCode {
         )
     }
     console.log(newReply)
-    resumesClient.close()
     return newReply
 }
 
@@ -67,7 +66,7 @@ val fMainPage =
         functionalComponent<MainPageProps> {props->
             val (resumeList, setResumeList) = useState(emptyList<Resume>())
             val (replyList, setReplyList) = useState(MutableList(10){false})
-            useEffect(dependencies = listOf(replyList)) {
+            useEffect(dependencies = listOf()) {
                 scope.launch {
                     val resumes = getResumeList()
                     val replies = getReplyList(props.store.getState().user!!.id)
@@ -98,8 +97,9 @@ val fMainPage =
                                                 scope.launch {
                                                     deleteReply(props.store.getState().user!!.id,resume.id)
                                                 }
-                                                replyList[index] = false
-                                                setReplyList(replyList)
+                                                val test = replyList.map { it }.toMutableList()
+                                                test[index] = false
+                                                setReplyList(test)
                                             }
                                             +"Удалить отклик" }
                                     }
@@ -109,8 +109,9 @@ val fMainPage =
                                                 scope.launch {
                                                     postReply(props.store.getState().user!!.id,resume.id)
                                                 }
-                                                replyList[index] = true
-                                                setReplyList(replyList)
+                                                val test = replyList.map { it }.toMutableList()
+                                                test[index] = true
+                                                setReplyList(test)
                                             }
                                             +"Откликнуться" }
                                     }
