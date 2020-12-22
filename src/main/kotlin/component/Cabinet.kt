@@ -10,12 +10,15 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.rectArea
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
@@ -67,7 +70,7 @@ val fCabinet =
             suspend fun postResume(userId: Int): HttpStatusCode {
                 val response = resumesClient.post<HttpStatusCode> {
                     url("http://localhost:3000/user/resumes")
-                    contentType(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json.withParameter("charset", "utf-8"))
                     accept(ContentType.Application.Json)
                     body = Resume(
                             0,
@@ -101,10 +104,10 @@ val fCabinet =
                         }
                         div("change_container") {
                             label("change_label") { +"Описание" }
-                            input(classes = "change_input") {
+                            textArea(classes = "change_input_desc", rows = "4", cols = "50") {
                                 attrs.value = desc
                                 attrs.onChangeFunction = {
-                                    val target = it.target as HTMLInputElement
+                                    val target = it.target as HTMLTextAreaElement
                                     setDesc(target.value)
                                 }
                                 attrs.required = true

@@ -394,7 +394,7 @@ hr {
 
 .change_container {
     display: flex;
-    justify-content: space-between;
+    justify-content: left;
     margin-bottom: 30px;
 }
 
@@ -416,6 +416,18 @@ hr {
     margin: 0;
     padding-top: 10px;
     padding-bottom: 11px;
+}
+
+.change_input_desc {
+    border-width: 1px;
+    border-style: solid;
+    padding: 0.5em;
+    width: auto;
+    font-size: 16px;
+    margin: 0;
+    padding-top: 10px;
+    padding-bottom: 11px;
+    margin-left: 6px;
 }
 
 .change_button {

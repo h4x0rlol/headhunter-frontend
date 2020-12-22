@@ -4,6 +4,7 @@ import data.State
 import data.User
 import hoc.withDisplayName
 import io.ktor.client.*
+import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
@@ -51,43 +52,55 @@ val fSignForm =
         val (username, setUsername) = useState("")
         val (password, setPassword) = useState("")
         val (status, setStatus) = useState(0)
+        val (invalidUser, setInvalidUser) = useState(false)
+        val (invalidPass, setInvalidPass) = useState(false)
+        val (userExist, setUserExist) = useState(false)
 
-
-        suspend fun submitSignIn(): User{
-            val newUser = jsonClient.post<User> {
-                url("http://localhost:3000/user/login")
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-                body = User(
-                        0,
-                        username,
-                        password,
-                        0
-                )
-
+        suspend fun submitSignIn() {
+            try {
+                val newUser = jsonClient.post<User> {
+                    url("http://localhost:3000/user/login")
+                    contentType(ContentType.Application.Json)
+                    accept(ContentType.Application.Json)
+                    body = User(
+                            0,
+                            username,
+                            password,
+                            0
+                    )
+                }
+                console.log(newUser)
+                props.store.dispatch(UserChange(newUser))
+                props.toggleSignForm
             }
-//            console.log(newUser)
-            props.store.dispatch(UserChange(newUser))
-            props.toggleSignForm
-
-            return newUser
+            catch (e:ClientRequestException ) {
+                setInvalidPass(true)
+            }
+            catch (e: ServerResponseException) {
+                setInvalidUser(true)
+            }
         }
 
-        suspend fun submitSignUp(): User{
-            val newUser = jsonClient.post<User> {
-                url("http://localhost:3000/user")
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-                body = User(id = 0,
-                        username = username,
-                        password = password,
-                        status = status
-                )
+        suspend fun submitSignUp(){
+            try {
+                val newUser = jsonClient.post<User> {
+                    url("http://localhost:3000/user")
+                    contentType(ContentType.Application.Json)
+                    accept(ContentType.Application.Json)
+                    body = User(id = 0,
+                            username = username,
+                            password = password,
+                            status = status
+                    )
+                }
+//                console.log(newUser)
+                props.store.dispatch(UserChange(newUser))
+                props.toggleSignForm
             }
-//            console.log(newUser)
-            props.store.dispatch(UserChange(newUser))
-            props.toggleSignForm
-            return newUser
+            catch (e:ClientRequestException ) {
+             setUserExist(true)
+            }
+
         }
 
         div("modalSign") {
@@ -147,9 +160,19 @@ val fSignForm =
                                                 attrs.placeholder = "Пароль"
                                                 attrs.type = InputType.password
                                             }
+                                            if(invalidUser) {
+                                                p("invalid") { +"Такого пользователя не существует" }
+                                            }
+                                            if(invalidPass) {
+                                                p("invalid") {+"Неверный пароль"}
+                                            }
                                         }
                                         button(classes = "signForm_body_form_btn") {
                                             +"Войти"
+                                            attrs.onClickFunction = {
+                                                setInvalidPass(false)
+                                                setInvalidUser(false)
+                                            }
                                         }
                                     }
                                 }
@@ -197,9 +220,15 @@ val fSignForm =
                                                     }
                                                 }
                                             }
+                                            if(userExist) {
+                                                p("invalid") {+"Пользователь с таким именем уже существует"}
+                                            }
                                         }
                                         button(classes = "signForm_body_form_btn") {
                                             +"Регистрация"
+                                            attrs.onClickFunction = {
+                                                setUserExist(false)
+                                            }
                                         }
                                     }
                                 }
